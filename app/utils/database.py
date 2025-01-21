@@ -15,7 +15,7 @@ DB_PASSWORD = os.getenv("DB_PASSWORD", "Mayur%407")
 DB_NAME = os.getenv("DB_NAME", "user_auth")
 
 # SQLAlchemy Database URL
-SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
+SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 
 # Setup SQLAlchemy Engine
 engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_pre_ping=True)

@@ -1,33 +1,3 @@
-# import json
-# from app.utils.database import get_db_connection
-# from app.models.user import UserSchema
-
-# def create_user(user: UserSchema):
-#     connection = get_db_connection()
-#     try:
-#         with connection.cursor() as cursor:
-#             sql = """
-#                 INSERT INTO users (user_email, user_phone, first_name, last_name, activated_on, payment_date, transaction_id, auths)
-#                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-#             """
-#             values = (
-#                 user.user_email, user.user_phone, user.first_name, user.last_name,
-#                 user.activated_on, user.payment_date, user.transaction_id, json.dumps(user.auths)
-#             )
-
-#             print("Executing SQL:", sql)  # Debugging
-#             print("With values:", values)  # Debugging
-
-#             cursor.execute(sql, values)
-#             connection.commit()
-
-#             print("✅ User inserted successfully")  # Debugging
-#     except Exception as e:
-#         print("❌ Error:", e)  # Debugging
-#     finally:
-#         connection.close()
-
-
 from app.utils.database import SessionLocal
 from sqlalchemy.orm import Session
 from app.models.user import User
