@@ -1,26 +1,3 @@
-# from sqlalchemy import create_engine
-# from sqlalchemy.orm import sessionmaker, declarative_base
-# from dotenv import load_dotenv
-# import pymysql
-# import os
-
-# load_dotenv()
-
-# DB_USER= os.getenv("DB_USER", "fastapi_user")
-# DB_PASSWORD= os.getenv("DB_PASSWORD", "Mayur%407")
-# DB_HOST= os.getenv("DB_HOST", "localhost")
-# DB_NAME= os.getenv("DB_NAME", "user_auth")
-
-
-# def get_db_connection():
-#     return pymysql.connect(
-#         host=DB_HOST,
-#         user=DB_USER,
-#         password=DB_PASSWORD,
-#         database=DB_NAME,
-#         cursorclass=pymysql.cursors.DictCursor
-#     )
-
 import os
 from dotenv import load_dotenv
 import pymysql
@@ -38,7 +15,7 @@ DB_PASSWORD = os.getenv("DB_PASSWORD", "Mayur%407")
 DB_NAME = os.getenv("DB_NAME", "user_auth")
 
 # SQLAlchemy Database URL
-SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
 
 # Setup SQLAlchemy Engine
 engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_pre_ping=True)
