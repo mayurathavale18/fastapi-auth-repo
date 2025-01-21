@@ -4,9 +4,9 @@ from DateTime.DateTime import datetime
 from typing import Optional
 from passlib.context import CryptContext
 import os
-from dotenv import load_env
+from dotenv import load_dotenv
 
-load_env()
+load_dotenv()
 
 # Secret key for encoding and decoding JWT tokens
 SECRET_KEY = os.getenv("SECRET_KEY") 

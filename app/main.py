@@ -16,7 +16,3 @@ app.include_router(user.router, prefix="/user", tags=["User"])
 @app.get("/")
 def root():
     return {"message": "Welcome to FastAPI Authentication App"}
-
-@app.on_event("startup")
-def startup_event():
-    init_db()
