@@ -22,12 +22,12 @@
 #         orm_mode = True
 
 
-from sqlalchemy import Column, Integer, String, Date, JSON
+from sqlalchemy import Column, String, Date, JSON
 from sqlalchemy.orm import relationship
 from app.utils.database import Base
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = 'users'
 
     first_name = Column(String(255))
     last_name = Column(String(255))

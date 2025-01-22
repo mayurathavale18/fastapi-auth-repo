@@ -11,7 +11,6 @@ class UserCreateSchema(BaseModel):
     first_name: str
     last_name: str
     user_email: str
-    user_phone: str
     password: str
     activated_on: Optional[date] = None
     payment_date: Optional[date] = None

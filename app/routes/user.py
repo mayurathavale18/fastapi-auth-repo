@@ -68,7 +68,6 @@ def update_user(user: UserCreateSchema, db: Session = Depends(get_db), current_u
     # Update user details
     db_user.first_name = user.first_name
     db_user.last_name = user.last_name
-    db_user.user_phone = user.user_phone
     db_user.activated_on = user.activated_on
     db_user.password = user.password
     db_user.payment_date = user.payment_date
