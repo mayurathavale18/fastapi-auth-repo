@@ -15,13 +15,13 @@ def create_user(db: Session, user: UserCreateSchema):
     db_user = User(
         user_email=user.user_email,
         user_phone=user.user_phone,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        password=user.password,
-        activated_on=user.activated_on,
-        payment_date=user.payment_date,
-        transaction_id=user.transaction_id,
-        auths=user.auths.model_dump_json() if user.auths else None  # Serialize the auths as a dictionary
+        first_name=user.first_name if user.first_name else "",
+        last_name=user.last_name if user.last_name else "",
+        password=user.password if user.password else "",
+        activated_on=user.activated_on if user.activated_on else "",
+        payment_date=user.payment_date if user.payment_date else "",
+        transaction_id=user.transaction_id if user.transaction_id else "",
+        auths=user.auths.model_dump_json() if user.auths else ""  # Serialize the auths as a dictionary
     )
     db.add(db_user)
     db.commit()

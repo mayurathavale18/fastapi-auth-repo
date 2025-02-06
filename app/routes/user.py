@@ -2,7 +2,7 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.models.user import User  # SQLAlchemy model
-from app.schemas.user import UserCreateSchema, UserLoginSchema, UserSignUpSchema  # Pydantic schema
+from app.schemas.user import UserCreateSchema, UserSignUpSchema  # Pydantic schema
 from app.cruds.user import create_user, get_db
 from app.utils.dependencies import get_current_user
 from app.utils.auth import create_access_token
@@ -18,37 +18,30 @@ def signup(user: UserSignUpSchema, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.user_email == user.user_email).first()
     print("Existing user found : ", existing_user)
     if existing_user:
-        raise HTTPException(status_code=400, detail="User already exists")
+        return {
+            "user": existing_user, 
+            "otp": "123456", 
+            "status": "User Already Created!" }
 
     # Create a minimal user record with default values
     new_user = User(
         user_email=user.user_email,
-        user_phone=user.user_phone,
-        first_name="",  # Default value
-        last_name="",  # Default value
-        password="",  # Placeholder password (can be updated later)
-        activated_on="",
-        payment_date="",
-        transaction_id="",
-        auths="",
+        user_phone=user.user_phone
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
-    # Generate access token
-    access_token_expires = timedelta(hours=1)
-    access_token = create_access_token(
-        data={"sub": new_user.user_email, "user_id": new_user.user_phone}, expires_delta=access_token_expires
-    )
-
-    static_otp = "123456"
+    # # Generate access token
+    # access_token_expires = timedelta(hours=1)
+    # access_token = create_access_token(
+    #     data={"sub": new_user.user_email, "user_id": new_user.user_phone}, expires_delta=access_token_expires
+    # )
 
     return {
-        "message": "User created successfully",
-        "access_token": access_token,
-        "token_type": "bearer",
-        "static_otp": "123456"
+        "user": new_user,
+        "otp": "123456",
+        "status": "New User Created!"
     }
 
 # Create user in MySQL
@@ -88,20 +81,20 @@ def update_user(user: UserCreateSchema, db: Session = Depends(get_db), current_u
 
     return {"message": "User updated successfully", "access_token": access_token}
     
-@router.post("/login")
-async def login(user: UserLoginSchema, db: Session = Depends(get_db)):
-    user_in_db = get_user_by_email(db=db, email=user.user_email)
+# @router.post("/login")
+# async def login(user: UserLoginSchema, db: Session = Depends(get_db)):
+#     user_in_db = get_user_by_email(db=db, email=user.user_email)
     
-    if not user_in_db or user_in_db.password != user.password: # Assuming phone is used as password
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+#     if not user_in_db or user_in_db.password != user.password: # Assuming phone is used as password
+#         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # Create new access token
-    access_token_expires = timedelta(hours=0.5)
-    access_token = create_access_token(
-        data={"sub": user_in_db.user_email, "user_id": user_in_db.user_phone}, expires_delta=access_token_expires
-    )
+#     # Create new access token
+#     access_token_expires = timedelta(hours=0.5)
+#     access_token = create_access_token(
+#         data={"sub": user_in_db.user_email, "user_id": user_in_db.user_phone}, expires_delta=access_token_expires
+#     )
 
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-    }
+#     return {
+#         "access_token": access_token,
+#         "token_type": "bearer",
+#     }

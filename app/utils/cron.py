@@ -56,13 +56,7 @@ def fetch_and_store_instruments():
         for url, path in [(COMPACT_URL, COMPACT_FILE_PATH), (DETAILED_URL, DETAILED_FILE_PATH)]:
             response = requests.get(url)
             if response.status_code == 200:
-                # Load CSV into DataFrame and sanitize
-                df = pd.read_csv(io.StringIO(response.text), dtype=str)  # FIXED HERE
-                df = df.applymap(sanitize_data)
-
-                # Save sanitized data
-                df.to_csv(path, index=False)
-                print(f"[CRON] {path} updated and sanitized at {datetime.now()}")
+                print(f"[CRON] {path} updated at {datetime.now()}")
             else:
                 print(f"[CRON] Failed to fetch {url}: {response.status_code}")
 
