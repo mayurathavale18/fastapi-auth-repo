@@ -27,10 +27,10 @@ def signup(user: UserSignUpSchema, db: Session = Depends(get_db)):
         first_name="",  # Default value
         last_name="",  # Default value
         password="",  # Placeholder password (can be updated later)
-        activated_on=None,
-        payment_date=None,
-        transaction_id=None,
-        auths=None,
+        activated_on="",
+        payment_date="",
+        transaction_id="",
+        auths="",
     )
     db.add(new_user)
     db.commit()
@@ -42,10 +42,13 @@ def signup(user: UserSignUpSchema, db: Session = Depends(get_db)):
         data={"sub": new_user.user_email, "user_id": new_user.user_phone}, expires_delta=access_token_expires
     )
 
+    static_otp = "123456"
+
     return {
         "message": "User created successfully",
         "access_token": access_token,
         "token_type": "bearer",
+        "static_otp": "123456"
     }
 
 # Create user in MySQL
