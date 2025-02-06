@@ -1,7 +1,7 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, Dict
-from datetime import date, timezone
-from DateTime.DateTime import datetime as dt
+from datetime import datetime as dt, date, timezone
+# from DateTime.DateTime import datetime as dt
 
 class AuthsSchema(BaseModel):
     zerodha: Optional[Dict[str, str]] = {}
@@ -9,14 +9,14 @@ class AuthsSchema(BaseModel):
     deltaex: Optional[Dict[str, str]] = {}
 
 class UserCreateSchema(BaseModel):
-    first_name: str = ""
-    last_name: str = ""
+    first_name: Optional[str] = ""
+    last_name: Optional[str] = ""
     user_email: str
-    password: str = ""
-    activated_on: Optional[date] = dt.now(timezone.utc)
-    payment_date: Optional[date] = dt.now(timezone.utc)
+    password: Optional[str] = ""
+    activated_on: dt = Field(default_factory=lambda: dt.now(timezone.utc))
+    payment_date: date = Field(default_factory=lambda: dt.now(timezone.utc).date())
     transaction_id: Optional[str] = ""
-    auths: Optional[AuthsSchema] = {}
+    auths: AuthsSchema
 
     class Config:
         from_attributes = True  # This allows the conversion from SQLAlchemy models to Pydantic models
@@ -26,10 +26,10 @@ class UserSignupSchema(BaseModel):
     last_name: Optional[str] = ""
     user_email: str
     password: Optional[str] = ""
-    activated_on: Optional[date] = dt.now(timezone.utc)
-    payment_date: Optional[date] = dt.now(timezone.utc)
+    activated_on: dt = Field(default_factory=lambda: dt.now(timezone.utc))
+    payment_date: date = Field(default_factory=lambda: dt.now(timezone.utc).date())
     transaction_id: Optional[str] = ""
-    auths: Optional[AuthsSchema] = {}
+    auths: AuthsSchema
 
     class Config:
         from_attributes = True  # This allows the conversion from SQLAlchemy models to Pydantic models

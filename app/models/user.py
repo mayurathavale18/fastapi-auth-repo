@@ -1,32 +1,7 @@
-# from pydantic import BaseModel, EmailStr
-# from typing import Optional, Dict
-# from datetime import date
-
-# class AuthSchema(BaseModel):
-#     client_id: str
-#     api_key: Optional[str] = None
-#     api_secret: Optional[str] = None
-#     access_token: str
-
-# class UserSchema(BaseModel):
-#     first_name: str
-#     last_name: str
-#     user_email: EmailStr
-#     user_phone: str
-#     activated_on: Optional[date] = None
-#     payment_date: Optional[date] = None
-#     transaction_id: Optional[str] = None
-#     auths: Dict[str, AuthSchema]
-
-#     class Config:
-#         from_attributes = True
-
-
-from sqlalchemy import Column, String, Date, JSON
+from sqlalchemy import Column, String, Date, JSON, DateTime
 from sqlalchemy.orm import relationship
 from app.utils.database import Base
-from DateTime.DateTime import datetime
-from datetime import timezone
+from datetime import datetime as dt, timezone
 
 class User(Base):
     __tablename__ = 'users'
@@ -36,8 +11,8 @@ class User(Base):
     user_email = Column(String(255), primary_key=True)
     user_phone = Column(String(20))
     password = Column(String(255), default="")  # Add password field to store plain text passwords for now
-    activated_on = Column(Date, default=datetime.now(timezone.utc))
-    payment_date = Column(Date, default=datetime.now(timezone.utc))
+    activated_on = Column(DateTime, default=lambda: dt.now(timezone.utc))  # Stores full timestamp
+    payment_date = Column(Date, default=lambda: dt.now(timezone.utc).date()) 
     transaction_id = Column(String(100), default="")
     auths = Column(JSON, default=dict)  # Use JSON type for storing auths
 

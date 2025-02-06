@@ -20,7 +20,7 @@ def get_filtered_instruments(
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="Instrument list not available yet.")
 
-    df = pd.read_csv(file_path, keep_default_na=False)
+    df = pd.read_csv(file_path, keep_default_na=False, low_memory=False)
 
     # Apply filters
     if exchange:

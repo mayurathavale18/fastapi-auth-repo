@@ -3,9 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.models.user import User  # SQLAlchemy model
 from app.schemas.user import UserCreateSchema, UserSignUpSchema  # Pydantic schema
-from app.cruds.user import create_user, get_db
-from app.utils.dependencies import get_current_user
-from app.utils.auth import create_access_token
+from app.cruds.user import get_db
 from app.cruds.user import get_user_by_email
 
 router = APIRouter()
@@ -43,21 +41,12 @@ def signup(user: UserSignUpSchema, db: Session = Depends(get_db)):
         "otp": "123456",
         "status": "New User Created!"
     }
-
-# Create user in MySQL
-@router.post("/create_user")
-def create_new_user(user: UserCreateSchema, db: Session = Depends(get_db)):
-    try:
-        created_user = create_user(db=db, user=user)
-        return {"message": "User created successfully", "user": created_user}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
     
 @router.put("/update_user")
-def update_user(user: UserCreateSchema, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+def update_user(user: UserCreateSchema, db: Session = Depends(get_db)):
     # Check if the user already exists in the database
     db_user = get_user_by_email(db=db, email=user.user_email)
-    auths_dict = user.auths.model_dump_json() if user.auths else None
+    auths_dict = user.auths.model_dump_json() if user.auths else {}
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -73,13 +62,15 @@ def update_user(user: UserCreateSchema, db: Session = Depends(get_db), current_u
     db.commit()
     db.refresh(db_user)
 
-    # Create new auth token for the user after updating
-    access_token_expires = timedelta(hours=1)
-    access_token = create_access_token(
-        data={"sub": user.user_email, "user_id": db_user.user_phone}, expires_delta=access_token_expires
-    )
+    updated_user = get_user_by_email(db=db, email=user.user_email)
 
-    return {"message": "User updated successfully", "access_token": access_token}
+    # # Create new auth token for the user after updating
+    # access_token_expires = timedelta(hours=1)
+    # access_token = create_access_token(
+    #     data={"sub": user.user_email, "user_id": db_user.user_phone}, expires_delta=access_token_expires
+    # )
+
+    return {"user": updated_user,"status": "User updated successfully"}
     
 # @router.post("/login")
 # async def login(user: UserLoginSchema, db: Session = Depends(get_db)):
