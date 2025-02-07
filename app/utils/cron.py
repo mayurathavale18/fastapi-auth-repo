@@ -3,49 +3,48 @@ import pandas as pd
 import os
 import requests
 from datetime import datetime
-from dotenv import load_dotenv
-import math
-import io  # Import StringIO
+# from dotenv import load_dotenv
+# import math
 
-load_dotenv()
+# load_dotenv()
 
 # URLs for fetching instruments from Dhan
-COMPACT_URL = os.getenv("COMPACT_URL")
-DETAILED_URL = os.getenv("DETAILED_URL")
+COMPACT_URL = os.getenv("COMPACT_URL", "https://images.dhan.co/api-data/api-scrip-master.csv")
+DETAILED_URL = os.getenv("DETAILED_URL", "https://images.dhan.co/api-data/api-scrip-master-detailed.csv")
 
 # File paths for storing instrument lists
-DATA_DIR = "data"
-COMPACT_FILE_PATH = os.path.join(DATA_DIR, "instruments_compact.csv")
-DETAILED_FILE_PATH = os.path.join(DATA_DIR, "instruments_detailed.csv")
+DATA_DIR=os.getenv("DATA_DIR", "data")
+COMPACT_FILE_PATH = os.getenv("COMPACT_FILE_PATH")
+DETAILED_FILE_PATH = os.getenv("DETAILED_FILE_PATH")
 
-def sanitize_data(value):
-    """Sanitize individual data values."""
-    if isinstance(value, float):
-        if math.isnan(value) or math.isinf(value):  
-            return None  # Convert NaN or Infinity to None
-    elif isinstance(value, str):
-        if value.strip() == "":  # Check for empty strings
-            return None  
-    return value  # Return as is if it's valid
+# def sanitize_data(value):
+#     """Sanitize individual data values."""
+#     if isinstance(value, float):
+#         if math.isnan(value) or math.isinf(value):  
+#             return None  # Convert NaN or Infinity to None
+#     elif isinstance(value, str):
+#         if value.strip() == "":  # Check for empty strings
+#             return None  
+#     return value  # Return as is if it's valid
 
-def sanitize_and_process_data(csv_file_path):
-    """Load, sanitize, and process CSV data."""
-    if not os.path.exists(csv_file_path):  
-        print(f"[WARNING] File {csv_file_path} does not exist.")
-        return []  
+# def sanitize_and_process_data(csv_file_path):
+#     """Load, sanitize, and process CSV data."""
+#     if not os.path.exists(csv_file_path):  
+#         print(f"[WARNING] File {csv_file_path} does not exist.")
+#         return []  
 
-    df = pd.read_csv(csv_file_path, dtype=str)  # Read everything as string to avoid auto-casting issues
+#     df = pd.read_csv(csv_file_path, dtype=str)  # Read everything as string to avoid auto-casting issues
 
-    # Replace empty strings and invalid floats with None
-    df = df.applymap(sanitize_data)
+#     # Replace empty strings and invalid floats with None
+#     df = df.applymap(sanitize_data)
 
-    # Convert back to appropriate types (float, int where needed)
-    for column in df.columns:
-        if df[column].str.replace('.', '', 1).str.isnumeric().all():  # If numeric
-            df[column] = pd.to_numeric(df[column])  # Convert to int/float
+#     # Convert back to appropriate types (float, int where needed)
+#     for column in df.columns:
+#         if df[column].str.replace('.', '', 1).str.isnumeric().all():  # If numeric
+#             df[column] = pd.to_numeric(df[column])  # Convert to int/float
 
-    sanitized_data = df.to_dict(orient="records")  # Convert back to list of dictionaries
-    return sanitized_data
+#     sanitized_data = df.to_dict(orient="records")  # Convert back to list of dictionaries
+#     return sanitized_data
 
 def fetch_and_store_instruments():
     """Downloads the latest instrument list from Dhan, sanitizes it, and saves it locally."""

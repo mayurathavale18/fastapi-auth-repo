@@ -19,7 +19,8 @@ def signup(user: UserSignUpSchema, db: Session = Depends(get_db)):
         return {
             "user": existing_user, 
             "otp": "123456", 
-            "status": "User Already Created!" }
+            "status": "User Already Created!",
+            "created_at": user.activated_on }
 
     # Create a minimal user record with default values
     new_user = User(

@@ -1,11 +1,18 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI
 import asyncio
 import httpx
 from contextlib import asynccontextmanager
-from app.routes import user
+from app.routes import user, instruments
 from app.utils.database import init_db
-from app.routes import instruments
 from app.utils.cron import scheduler  # Import the cron job
+import pandas as pd
+
+
+COMPACT_FILE_PATH = os.getenv("COMPACT_FILE_PATH")
+DETAILED_FILE_PATH = os.getenv("DETAILED_FILE_PATH")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -15,6 +22,16 @@ async def lifespan(app: FastAPI):
     # Starting the scheduler only if it's not already running
     if not scheduler.running:
         scheduler.start()
+    
+    if os.path.exists(COMPACT_FILE_PATH):
+        app.state.compact_df = pd.read_csv(COMPACT_FILE_PATH, keep_default_na=False, low_memory=False)
+    else:
+        app.state.compact_df = None
+
+    if os.path.exists(DETAILED_FILE_PATH):
+        app.state.detailed_df = pd.read_csv(DETAILED_FILE_PATH, keep_default_na=False, low_memory=False)
+    else:
+        app.state.detailed_df = None
 
     yield  # Let the app run
 

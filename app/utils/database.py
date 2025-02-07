@@ -1,12 +1,8 @@
 import os
-from dotenv import load_dotenv
 import pymysql, psycopg2
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
-# Load environment variables
-load_dotenv()
 
 # Database credentials
 DB_HOST = os.getenv("DB_HOST", "localhost")
