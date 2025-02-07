@@ -1,12 +1,24 @@
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.models.user import User  # SQLAlchemy model
 from app.schemas.user import UserCreateSchema, UserSignUpSchema  # Pydantic schema
 from app.cruds.user import get_db
 from app.cruds.user import get_user_by_email
+import os
+import httpx
 
 router = APIRouter()
+
+@router.get("/test")
+async def test(request: Request):
+    return {
+        "Content-Type": request.headers.get("Content-Type"),
+        "Accept": request.headers.get("Accept"),
+        "Access-Token": request.headers.get("access-token"),
+        "holdings": request.app.state.holdings
+    }
+
 
 # Static OTP endpoint
 @router.post("/signup")
@@ -72,6 +84,29 @@ def update_user(user: UserCreateSchema, db: Session = Depends(get_db)):
     # )
 
     return {"user": updated_user,"status": "User updated successfully"}
+
+@router.get("/holdings")
+async def get_holdings(request:Request):
+    base_url = os.getenv("BASE_URL")
+    if not base_url:
+        return {"error": "BASE_URL is not set"}
+
+    url = f"{base_url}/holdings"
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "access-token": os.getenv("DHAN_ACCESS_TOKEN"),  # Ensure non-null value
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, headers=headers)
+    
+    request.app.state.holdings = response.json()
+
+    return request.app.state.holdings
+
+
     
 # @router.post("/login")
 # async def login(user: UserLoginSchema, db: Session = Depends(get_db)):

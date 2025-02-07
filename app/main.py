@@ -9,6 +9,7 @@ from app.routes import user, instruments
 from app.utils.database import init_db
 from app.utils.cron import scheduler  # Import the cron job
 import pandas as pd
+from app.middleware.headers import AddHeadersMiddleware
 
 
 COMPACT_FILE_PATH = os.getenv("COMPACT_FILE_PATH")
@@ -22,6 +23,8 @@ async def lifespan(app: FastAPI):
     # Starting the scheduler only if it's not already running
     if not scheduler.running:
         scheduler.start()
+
+    app.state.holdings = {}
     
     if os.path.exists(COMPACT_FILE_PATH):
         app.state.compact_df = pd.read_csv(COMPACT_FILE_PATH, keep_default_na=False, low_memory=False)
@@ -49,8 +52,14 @@ async def cyclic_func():
 
 app = FastAPI(lifespan=lifespan)
 
+#MiddleWaress
+app.add_middleware(AddHeadersMiddleware)
+
+#Routes
 app.include_router(user.router, prefix="/user", tags=["User"])
 app.include_router(instruments.router)
+
+
 
 @app.get("/")
 def root():
