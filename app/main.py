@@ -57,7 +57,7 @@ app.add_middleware(AddHeadersMiddleware)
 
 #Routes
 app.include_router(user.router, prefix="/user", tags=["User"])
-app.include_router(instruments.router)
+app.include_router(instruments.router, prefix="/instruments", tags=["Data"])
 
 
 
