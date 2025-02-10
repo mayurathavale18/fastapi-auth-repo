@@ -10,7 +10,9 @@ from app.utils.database import init_db
 from app.utils.cron import scheduler  # Import the cron job
 import pandas as pd
 from app.middleware.headers import AddHeadersMiddleware
+from app.utils.websocket import DhanWebSocketClient
 
+ws_client = DhanWebSocketClient()  # Initialize WebSocket Client
 
 COMPACT_FILE_PATH = os.getenv("COMPACT_FILE_PATH")
 DETAILED_FILE_PATH = os.getenv("DETAILED_FILE_PATH")
@@ -38,6 +40,8 @@ async def lifespan(app: FastAPI):
 
     yield  # Let the app run
 
+    ws_task.cancel()  # Stop WebSocket on app shutdown
+
     task.cancel()
 
 async def cyclic_func():
@@ -59,9 +63,7 @@ app.add_middleware(AddHeadersMiddleware)
 app.include_router(user.router, prefix="/user", tags=["User"])
 app.include_router(instruments.router, prefix="/instruments", tags=["Data"])
 
-
-
 @app.get("/")
 def root():
-    return {"message": "stay awake request successfull!"}
+    return {"FastAPI with Dhan WebSocket Running 🚀"}
 

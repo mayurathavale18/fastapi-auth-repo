@@ -41,4 +41,5 @@ tzdata==2025.1
 tzlocal==5.2
 urllib3==2.3.0
 uvicorn==0.34.0
+websockets==14.2
 zope.interface==7.2
