@@ -12,6 +12,7 @@ import pandas as pd
 from app.middleware.headers import AddHeadersMiddleware
 from app.utils.websocket import DhanWebSocketClient
 
+
 ws_client = DhanWebSocketClient()  # Initialize WebSocket Client
 
 COMPACT_FILE_PATH = os.getenv("COMPACT_FILE_PATH")
@@ -39,8 +40,6 @@ async def lifespan(app: FastAPI):
         app.state.detailed_df = None
 
     yield  # Let the app run
-
-    ws_task.cancel()  # Stop WebSocket on app shutdown
 
     task.cancel()
 
