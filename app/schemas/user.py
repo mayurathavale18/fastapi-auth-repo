@@ -42,6 +42,16 @@ class UserSignUpSchema(BaseModel):
     class Config:
         from_attributes: True
 
+class UserHoldingSchema(BaseModel):
+    user_email: str
+    user_access_token: str  # 🔥 Required for API calls
+    security_id: str
+    trading_symbol: str
+    stop_loss: float
+    created_at: dt = Field(default_factory=lambda: dt.now(timezone.utc))
+    updated_at: dt = Field(default_factory=lambda: dt.now(timezone.utc))
+    class Config:
+        from_attributes = True
 
 # class UserLoginSchema(BaseModel):
 #     user_email: EmailStr
