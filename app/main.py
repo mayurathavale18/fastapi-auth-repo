@@ -5,7 +5,7 @@ from fastapi import FastAPI
 import asyncio
 import httpx
 from contextlib import asynccontextmanager
-from app.routes import user, instruments, holdings
+from app.routes import user, instruments, holdings, orders
 from app.utils.database import init_db
 from app.utils.cron import scheduler  # Import the cron job
 import pandas as pd
@@ -62,6 +62,7 @@ app.add_middleware(AddHeadersMiddleware)
 app.include_router(user.router, prefix="/user", tags=["User"])
 app.include_router(instruments.router, prefix="/instruments", tags=["Data"])
 app.include_router(holdings.router, prefix="/holdings", tags=["holdings"])
+app.include_router(orders.router, prefix="/orders", tags=["orders"])
 
 @app.get("/")
 def root():
